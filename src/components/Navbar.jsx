@@ -27,6 +27,12 @@ const Navbar = () => {
     }
   }, [screenSize]);
 
+  function handleMenuClick() {
+    if (screenSize <= 800) {
+      setActiveMenu(false);
+    }
+  }
+
   return (
     <div className="nav-container">
       <div className="logo-container">
@@ -36,16 +42,16 @@ const Navbar = () => {
       </div>
       {activeMenu && (
       <Menu theme="dark">
-        <Menu.Item onClick={() => setActiveMenu(!activeMenu)} icon={<HomeOutlined />}>
+        <Menu.Item onClick={handleMenuClick} icon={<HomeOutlined />}>
           <Link className="linkName" to="/">Home</Link>
         </Menu.Item>
-        <Menu.Item onClick={() => setActiveMenu(!activeMenu)} icon={<FundOutlined />}>
+        <Menu.Item onClick={handleMenuClick} icon={<FundOutlined />}>
           <Link className="linkName" to="/cryptocurrencies">Cryptocurrencies</Link>
         </Menu.Item>
-        <Menu.Item onClick={() => setActiveMenu(!activeMenu)} icon={<MoneyCollectOutlined />}>
+        <Menu.Item onClick={handleMenuClick} icon={<MoneyCollectOutlined />}>
           <Link className="linkName" to="/exchanges">Exchanges</Link>
         </Menu.Item>
-        <Menu.Item onClick={() => setActiveMenu(!activeMenu)} icon={<BulbOutlined />}>
+        <Menu.Item onClick={handleMenuClick} icon={<BulbOutlined />}>
           <Link className="linkName" to="/news">News</Link>
         </Menu.Item>
       </Menu>
