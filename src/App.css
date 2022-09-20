@@ -314,10 +314,8 @@ a:hover{
 }
 .news-image-container{
     display: flex !important;
+    flex-direction: column;
     justify-content: space-between !important;
-}
-.news-title{
-width: 70%;
 }
 
 .news-image-container .img{

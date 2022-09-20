@@ -1,62 +1,68 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react'
 import { Select, Typography, Row, Col, Avatar, Card } from 'antd';
-import moment from 'moment';
 
-import { useGetCryptosQuery } from '../services/cryptoApi';
-import { useGetCryptoNewsQuery } from '../services/cryptoNewsApi';
-import Loader from './Loader';
-
-const demoImage = 'https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News';
-
+const avatar = 'https://i.ibb.co/RQHLgX7/Artboard-10.png';
+const stImage = 'https://i.ibb.co/0XpYq5n/download.jpg';
 const { Text, Title } = Typography;
-const { Option } = Select;
 
-const News = ({ simplified }) => {
-  const [newsCategory, setNewsCategory] = useState('Cryptocurrency');
-  const { data } = useGetCryptosQuery(100);
-  const { data: cryptoNews } = useGetCryptoNewsQuery({ newsCategory, count: simplified ? 6 : 12 });
+function DataFetching() {
+  const [post, setPost] = useState([])
+  useEffect(() => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var requestOptions = {
+        method: "get",
+        headers: myHeaders,
+        redirect: "follow",
+        
+    };
+    
+    fetch("https://v1.nocodeapi.com/cryptodome/medium/pexsoIXTqZBnejIQ", requestOptions)
+        .then(response => response.json())
+        .then(data => setPost(data))
+        .catch(error => console.log('error', error));
+  }, []);
 
-  if (!cryptoNews?.value) return <Loader />;
+  console.log(post[0])
+
+  function setCardImage(content) {
+    var string = content
+    var str = string.substring(0, 300)
+    var separator = '<figure>'
+    var lastPart = str.split(separator).pop()
+    var image = lastPart.substring(0, lastPart.indexOf('</figure>'))
+    var separator1 = 'src="'
+    var lastPart1 = image.split(separator1).pop()
+    var imageUrl = lastPart1.substring(0, lastPart1.indexOf('" />'))
+    if (imageUrl != "")
+      return imageUrl
+    else
+      return stImage
+  }
 
   return (
     <Row gutter={[24, 24]}>
-      {!simplified && (
-        <Col span={24}>
-          <Select
-            showSearch
-            className="select-news"
-            placeholder="Select a Crypto"
-            optionFilterProp="children"
-            onChange={(value) => setNewsCategory(value)}
-            filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          >
-            <Option value="Cryptocurency">Cryptocurrency</Option>
-            {data?.data?.coins?.map((currency) => <Option value={currency.name}>{currency.name}</Option>)}
-          </Select>
-        </Col>
-      )}
-      {cryptoNews.value.map((news, i) => (
+      {post.map((post, i) => (
         <Col xs={24} sm={12} lg={8} key={i}>
           <Card hoverable className="news-card">
-            <a href={news.url} target="_blank" rel="noreferrer">
+            <a href={post.link} target="_blank" rel="noreferrer">
               <div className="news-image-container">
-                <Title className="news-title" level={4}>{news.name}</Title>
-                <img src={news?.image?.thumbnail?.contentUrl || demoImage} alt="" />
+                <Title className="news-title" level={4}>{post.title}</Title>
+                <img src={setCardImage(post.content)} alt="" />
               </div>
-              <p>{news.description.length > 100 ? `${news.description.substring(0, 100)}...` : news.description}</p>
+              {/* <p>{post.content.length > 100 ? `${post.content.substring(0, 100)}...` : post.content}</p> */}
+              <p>Read the full article on medium by clicking this card. If you like the article don't forget to "clap" and follow us!</p>
               <div className="provider-container">
                 <div>
-                  <Avatar src={news.provider[0]?.image?.thumbnail?.contentUrl || demoImage} alt="" />
-                  <Text className="provider-name">{news.provider[0]?.name}</Text>
+                  <Avatar src={avatar} alt="" />
+                  <Text className="provider-name"><b>{post.author}</b></Text>
                 </div>
-                <Text>{moment(news.datePublished).startOf('ss').fromNow()}</Text>
               </div>
             </a>
           </Card>
-        </Col>
-      ))}
+        </Col>))}
     </Row>
-  );
-};
+  )
+}
 
-export default News;
+export default DataFetching
