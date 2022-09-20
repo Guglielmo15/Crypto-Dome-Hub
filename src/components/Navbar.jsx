@@ -27,11 +27,11 @@ const Navbar = () => {
     }
   }, [screenSize]);
 
-  function handleMenuClick() {
+  const handleMenuClick = () => {
     if (screenSize <= 800) {
       setActiveMenu(false);
     }
-  }
+  };
 
   return (
     <div className="nav-container">
